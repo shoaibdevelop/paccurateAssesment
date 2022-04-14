@@ -1,0 +1,102 @@
+
+<div class="container-fluid">
+    <!-- Content Row -->
+    <div class="row justify-content-center">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 justify-content-between">
+                <div class="d-flex flex-column flex-sm-row">
+                  <h6 class="m-0">Users list</h6>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-6 col-md-2">
+                        <div> 
+                                <select aria-controls="dataTable" class="form-control form-control-sm" (change)='onPageSizeChaned($event)'>
+                                    <option value="5">5</option>
+                                    <option value="10">10</option>
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select> 
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-md-4" style="position: relative; right: 0px; left: 50%;">
+                        <div class="form-group">
+                            <input type="search" class="form-control form-control-sm" placeholder="Search" [formControl] = "search" (input)='applySearch()' autocomplete="off" >
+                        </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12 col-xl-12">
+                        <div class="form-group">
+                          <label>Coloumns Showing: </label>
+                            <ng-multiselect-dropdown
+                                [settings]="dropdownSettings"
+                                [data]="coloumns"
+                                [(ngModel)]="selectedColoumns"
+                                (onSelect)="onItemSelect()"
+                                (onDeSelect)="onItemDeSelect()"
+                                (onSelectAll)="onSelectAll()"></ng-multiselect-dropdown>
+                        </div>
+                    </div>
+                  </div>
+
+                  <div class="table-responsive">
+                    <table class="table table-striped " width="100%" cellspacing="0">
+                      <thead>
+                        <tr>
+                          <th class="text-center sorting_disabled">
+                            <div class="form-check">
+                              <input type="checkbox" class="form-check-input position-relative" (change) = "selectAll($event)">
+                            </div>
+                          </th>
+                          <th (click) = "sortSup('s_no')" *ngIf="getColoumnVisibility('s_no')">S No <i class="las la-sort"></i></th>
+                          <th (click) = "sortSup('first_name')" *ngIf="getColoumnVisibility('first_name')">First Name <i class="las la-sort"></i></th>
+                          <th (click) = "sortSup('last_name')" *ngIf="getColoumnVisibility('last_name')">Last Name <i class="las la-sort"></i></th>
+                          <th (click) = "sortSup('address')" *ngIf="getColoumnVisibility('address')">Address <i class="las la-sort"></i></th>
+                          <th (click) = "sortSup('email')" *ngIf="getColoumnVisibility('email')">Email Address <i class="las la-sort"></i></th>
+                          <th (click) = "sortSup('gender')" *ngIf="getColoumnVisibility('gender')">Gender <i class="las la-sort"></i></th>
+                          <th (click) = "sortSup('city')" *ngIf="getColoumnVisibility('city')">City <i class="las la-sort"></i></th>
+                          <th (click) = "sortSup('zip_code')" *ngIf="getColoumnVisibility('zip_code')">Zip Code <i class="las la-sort"></i></th>
+                          <th (click) = "sortSup('contact_number')" *ngIf="getColoumnVisibility('contact_number')">Contact Number <i class="las la-sort"></i></th>
+                          <th (click) = "sortSup('qualification')" *ngIf="getColoumnVisibility('qualification')">Qualification <i class="las la-sort"></i></th>
+                          <th (click) = "sortSup('experience')" *ngIf="getColoumnVisibility('experience')">Experience <i class="las la-sort"></i></th>
+                          <th (click) = "sortSup('hobbies')" *ngIf="getColoumnVisibility('hobbies')">Hobbies <i class="las la-sort"></i></th>
+                          <th (click) = "sortSup('Remarks')" *ngIf="getColoumnVisibility('Remarks')">Remarks <i class="las la-sort"></i></th>
+                          
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let user of users  | orderBy: key: reverse | paginate: {id: 'suppliersPagination',itemsPerPage: pageSize,currentPage:pSupplier}">
+                          <td class="text-center">
+                            <div class="form-check">
+                              <input type="checkbox" class="form-check-input position-relative" (change) = "selectUser($event,user)" [checked]="allUsersSelected">
+                            </div>
+                          </td>
+                          <td *ngIf="getColoumnVisibility('s_no')">{{user.s_no}}</td>
+                          <td *ngIf="getColoumnVisibility('first_name')">{{user.first_name}}</td>
+                          <td *ngIf="getColoumnVisibility('last_name')">{{user.last_name}}</td>
+                          <td *ngIf="getColoumnVisibility('address')">{{user.address}}</td>
+                          <td *ngIf="getColoumnVisibility('email')">{{user.email}}</td>
+                          <td *ngIf="getColoumnVisibility('gender')">{{user.gender}}</td>
+                          <td *ngIf="getColoumnVisibility('city')">{{user.city}}</td>
+                          <td *ngIf="getColoumnVisibility('zip_code')">{{user.zip_code}}</td>
+                          <td *ngIf="getColoumnVisibility('contact_number')">{{user.contact_number}}</td>
+                          <td *ngIf="getColoumnVisibility('qualification')">{{user.qualification}}</td>
+                          <td *ngIf="getColoumnVisibility('experience')">{{user.experience}}</td>
+                          <td *ngIf="getColoumnVisibility('hobbies')">{{user.hobbies}}</td>
+                          <td *ngIf="getColoumnVisibility('Remarks')">{{user.Remarks}}</td>
+                        </tr>
+                      <tbody>
+                    </table>
+                    <pagination-controls (pageChange) = "pSupplier = $event" id="suppliersPagination"></pagination-controls>
+                    <span class="page-number"> Displaying {{ (pSupplier - 1) * pageSize + 1 }} - {{ pSupplier * pageSize }} of {{ users.length }} </span>
+                  </div>
+
+              </div>
+        </div>
+    </div>
+</div>
